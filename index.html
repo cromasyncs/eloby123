@@ -190,8 +190,9 @@ h2.title{font-size:clamp(2rem,4vw,3.2rem);margin:.4rem 0 .6rem} /* títulos de s
 .drop-col{border-radius:16px;overflow:hidden;position:relative;aspect-ratio:3/4;display:flex;align-items:flex-end;padding:14px;color:#fff;transition:transform .4s var(--ease)} /* cartão de cada coleção no submenu */
 .drop-col:hover{transform:translateY(-4px)}            /* cartão sobe um pouco ao passar o mouse */
 .drop-col .bgsvg{position:absolute;inset:0}           /* fundo do cartão da coleção */
-.drop-col span{position:relative;font-family:var(--serif);font-size:1.25rem;line-height:1.1} /* nome da coleção */
-.drop-col em{display:block;font-style:normal;font-family:var(--sans);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;opacity:.85;margin-top:4px} /* "Ver coleção" embaixo do nome */
+.drop-col::after{content:"";position:absolute;left:0;right:0;bottom:0;height:62%;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.82) 38%,rgba(255,255,255,0) 100%)} /* faixa branca que desce até a borda de baixo, destacando o texto */
+.drop-col span{position:relative;z-index:2;color:#111;font-family:var(--serif);font-size:1.25rem;line-height:1.1;font-weight:500} /* nome da coleção em preto, por cima da faixa branca */
+.drop-col em{display:block;font-style:normal;font-family:var(--sans);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#111;opacity:.75;margin-top:4px;font-weight:500} /* "Ver coleção" em preto embaixo do nome */
 .drop-gifts{min-width:300px;display:grid;gap:4px}     /* submenu Presentes: lista simples */
 .drop-gifts a{padding:10px 12px;border-radius:12px;transition:.3s;font-size:.92rem} /* cada opção de presente */
 .drop-gifts a:hover{background:rgba(var(--soft-rgb),.6);color:var(--deep)} /* opção ganha fundo ao passar o mouse */
@@ -1247,6 +1248,12 @@ const MIDIAS = {                                     // ↓↓↓ TROQUE AQUI OS
 
   /* ---------- SITE (ficam ao lado do index.html) ---------- */
   favicon:       'favicon-elo.png',                  // ícone da aba do navegador (feito a partir do símbolo vetorizado da logo)
+  faviconPequeno:'favicon-32.png',                   // ícone da aba em 32px (fica mais nítido na aba)
+  faviconApple:  'apple-touch-icon.png',             // ícone quando salvam o site na tela do iPhone
+  logoSimbolo:   'elo-simbolo.png',                  // LOGO EM ALTA QUALIDADE: símbolo (aros + diamante) da barra superior e do WhatsApp — PNG branco com fundo transparente
+  logoMaos:      'elo-maos.png',                     // LOGO EM ALTA QUALIDADE: mãos + símbolo (Início e Quem Somos)
+  logoCompleta:  'elo-logo-completa.png',            // LOGO EM ALTA QUALIDADE: símbolo + nome (rodapé)
+  // (os PNGs acima são brancos; o site pinta cada um na cor certa sozinho. Se o arquivo faltar, usa a logo embutida no código)
   logo:          '',                                 // A LOGO OFICIAL VETORIZADA JÁ ESTÁ EMBUTIDA NO CÓDIGO (procure "LOGO OFICIAL VETORIZADA"). Só preencha se quiser trocar por um arquivo .png/.svg
   logoBranca:    '',                                 // versão branca opcional (só se preencher a de cima)
   videoBanner:   'elo-banner.mp4',                   // VÍDEO DO BANNER (toca sozinho, sem som e em loop no topo da página Início)
@@ -1449,15 +1456,36 @@ const camadaFoto=(src,alt='')=>src?`<img class="foto" src="${src}" alt="${alt}" 
 
 /* ---------- FAVICON (vem da SESSÃO DE MÍDIAS) ---------- */
 (()=>{                                               // função que roda sozinha uma vez
-  const src=caminho(PASTA_SITE,MIDIAS.favicon);      // monta o caminho do favicon
-  if(!src)return;                                    // se não tiver favicon definido, não faz nada
-  ['icon','apple-touch-icon'].forEach(rel=>{         // cria o ícone da aba e o ícone do iPhone
-    const l=document.createElement('link');          // cria uma tag <link>
-    l.rel=rel;                                       // diz que é um ícone
-    l.href=src;                                      // aponta para o arquivo
-    document.head.appendChild(l);                    // coloca no cabeçalho da página
+  const icones=[                                     // lista de ícones: [tipo, arquivo, tamanho]
+    ['icon',caminho(PASTA_SITE,MIDIAS.faviconPequeno),'32x32'],          // ícone pequeno da aba (mais nítido)
+    ['icon',caminho(PASTA_SITE,MIDIAS.favicon),'512x512'],               // ícone grande (telas de alta resolução)
+    ['apple-touch-icon',caminho(PASTA_SITE,MIDIAS.faviconApple||MIDIAS.favicon),'180x180'] // ícone do iPhone
+  ];                                                 // fim da lista
+  icones.forEach(([rel,href,sizes])=>{               // para cada ícone...
+    if(!href)return;                                 // ...sem arquivo definido, pula
+    const l=document.createElement('link');          // ...cria uma tag <link>
+    l.rel=rel;l.href=href;l.sizes=sizes;l.type='image/png'; // ...tipo, arquivo e tamanho
+    document.head.appendChild(l);                    // ...coloca no cabeçalho da página
   });                                                // fim do forEach
 })();                                                // fim do favicon
+
+/* ---------- LOGOS EM ALTA QUALIDADE (PNG da SESSÃO DE MÍDIAS) ----------
+   Os PNGs brancos viram "máscara": o site pinta a logo na cor certa (branca na barra sólida, malva no vidro).
+   Só troca quando o arquivo carrega de verdade e o site está publicado (no GitHub); se faltar, fica a logo embutida. */
+(()=>{                                               // função que roda sozinha uma vez
+  if(location.protocol==='file:')return;             // aberto direto do computador: mantém a logo embutida (alguns navegadores bloqueiam máscara local)
+  [['.logo-sym',MIDIAS.logoSimbolo],['.logo-hands',MIDIAS.logoMaos],['.logo-completa',MIDIAS.logoCompleta]].forEach(([cls,nome])=>{ // cada logo: classe do CSS + arquivo
+    const src=caminho(PASTA_SITE,nome);              // caminho do arquivo
+    if(!src)return;                                  // sem arquivo definido: mantém a embutida
+    const img=new Image();                           // testa se o arquivo existe
+    img.onload=()=>{                                 // carregou...
+      const st=document.createElement('style');      // ...cria uma regra de estilo
+      st.textContent=`${cls}{--m:url("${src}")!important;aspect-ratio:${img.naturalWidth}/${img.naturalHeight}!important}`; // ...troca o desenho e a proporção pela do PNG
+      document.head.appendChild(st);                 // ...aplica
+    };                                               // fim do onload
+    img.src=src;                                     // começa a carregar
+  });                                                // fim do forEach
+})();                                                // fim das logos em alta qualidade
 
 /* ---------- LOGO EM ARQUIVO (vem da SESSÃO DE MÍDIAS) ---------- */
 (()=>{                                               // função que roda sozinha uma vez
@@ -1638,7 +1666,8 @@ const revHTML=AVALIACOES.map(r=>                     // monta cada cartão de av
 $$('.marquee').forEach(el=>el.innerHTML=revHTML+revHTML); // repete 2x para a faixa correr sem emenda (em todas as faixas de avaliação)
 
 /* ---------- PÁGINA JOIAS: filtros ---------- */
-const F={cat:'all',col:'all',sort:'rel',min:0,max:Infinity,shown:8}; // estado dos filtros: categoria, coleção, ordem, preço mínimo/máximo, quantas mostrar
+const POR_PAGINA=20;                                 // quantas joias aparecem de cada vez na página Joias (e quantas o botão "Carregar mais" acrescenta)
+const F={cat:'all',col:'all',sort:'rel',min:0,max:Infinity,shown:POR_PAGINA}; // estado dos filtros: categoria, coleção, ordem, preço mínimo/máximo, quantas mostrar
 $('#filterChips').innerHTML=`<button class="chip on" data-fc="all">Todas</button>`+CAT_ATIVAS.map(c=>`<button class="chip" data-fc="${c.id}">${c.nome}</button>`).join(''); // botões de categoria
 $('#fColl').innerHTML=`<option value="all">Todas as coleções</option>`+COLECOES.map(c=>`<option value="${c.id}">${c.nome}</option>`).join(''); // opções de coleção
 function rotaJoias(o){                               // monta o endereço da página Joias com filtros (ex: #/joias?cat=aneis)
@@ -1660,7 +1689,7 @@ function renderGrid(){                               // desenha a grade de joias
   $('#shopTitle').textContent=t;                     // escreve o título
   $('#shopCount').textContent=list.length+' joias encontradas'; // escreve a quantidade
   $('#grid').innerHTML=list.length?list.slice(0,F.shown).map(card).join(''):'<p class="empty">Nenhuma joia encontrada com esses filtros.</p>'; // desenha os cards (ou a mensagem de vazio)
-  $('#more').style.display=list.length>F.shown?'':'none'; // mostra "Carregar mais" só se houver mais joias
+  $('#more').style.display=list.length>F.shown?'':'none'; // "Carregar mais" só aparece se houver mais de 20 joias (ou mais do que as já mostradas)
   $$('#filterChips .chip').forEach(c=>c.classList.toggle('on',c.dataset.fc===F.cat)); // marca o botão de categoria ativo
   $('#fColl').value=F.col;                           // marca a coleção escolhida
   $('#fSort').value=F.sort;                          // marca a ordem escolhida
@@ -1792,7 +1821,7 @@ function abrirRota(){                                // lê o endereço e mostra
     F.col=params.get('col')||'all';                  // coleção
     F.min=+params.get('min')||0;                     // preço mínimo
     F.max=+params.get('max')||Infinity;              // preço máximo
-    F.shown=8;                                       // volta a mostrar 8 joias
+    F.shown=POR_PAGINA;                              // volta a mostrar as primeiras 20 joias
     renderGrid();                                    // desenha a grade
   }                                                  // fim da página Joias
   paginaAtual=nome;                                  // lembra a página atual
@@ -1832,7 +1861,7 @@ $('#openFav').onclick=()=>{renderFavs();openLayer('#favs')}; // coração da bar
 $('#burger').onclick=()=>openLayer('#mnav');         // botão de menu: abre o menu do celular
 $('#fColl').onchange=e=>irPara(rotaJoias({...F,col:e.target.value})); // trocar a coleção na página Joias
 $('#fSort').onchange=e=>{F.sort=e.target.value;renderGrid()};  // trocar a ordem na página Joias
-$('#more').onclick=()=>{F.shown+=8;renderGrid()};    // "Carregar mais": mostra mais 8
+$('#more').onclick=()=>{F.shown+=POR_PAGINA;renderGrid()}; // "Carregar mais": mostra mais 20
 $('#btnSeguir').href=CONFIG.instagram;              // botão "Seguir @elobyandressa" abre o Instagram
 $('#totop').onclick=()=>irAoTopo();                  // botão voltar ao topo
 if(!store.get('elo_cookie',false))setTimeout(()=>$('#cookie').classList.add('on'),1800); // mostra o aviso de cookies se ainda não aceitou
