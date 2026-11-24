@@ -692,7 +692,7 @@ footer .socials a:hover{background:var(--deep);color:#fff} /* ícone preenchido 
 <div class="pagina" data-pagina="inicio"><!-- Página Início (endereço: #/inicio) -->
 
   <section class="hero" data-fundo="escuro"><!-- Banner de vídeo (fundo escuro → barra sólida) -->
-    <video id="videoBanner" autoplay muted loop playsinline preload="auto"></video><!-- Vídeo do banner (arquivo definido na SESSÃO DE MÍDIAS) -->
+    <video id="videoBanner" src="banner-elo.mp4" poster="banner-elo-capa.jpg" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video><!-- Vídeo do banner: toca sozinho, sem som e em loop infinito (arquivo também definido na SESSÃO DE MÍDIAS) -->
     <div class="container hero-inner"><!-- Conteúdo por cima do vídeo -->
       <div><!-- Coluna de texto -->
         <p class="eyebrow reveal">Alta joalheria autoral</p><!-- Textinho acima do título -->
@@ -1489,7 +1489,18 @@ const camadaFoto=(src,alt='')=>src?`<img class="foto" src="${src}" alt="${alt}" 
   const v=$('#videoBanner');                         // pega o vídeo do banner
   const vs=caminho(PASTA_SITE,MIDIAS.videoBanner);   // caminho do vídeo
   if(MIDIAS.posterBanner)v.poster=caminho(PASTA_SITE,MIDIAS.posterBanner); // imagem de espera do vídeo (se houver)
-  if(vs){v.src=vs;v.play().catch(()=>{})}            // coloca o vídeo e manda tocar (sem som)
+  if(vs){                                            // se há vídeo definido...
+    v.muted=true;v.defaultMuted=true;                // ...garante SEM SOM (os navegadores só deixam tocar sozinho se estiver mudo)
+    v.loop=true;v.autoplay=true;v.playsInline=true;  // ...garante loop, autoplay e tocar dentro da página no iPhone
+    if(v.getAttribute('src')!==vs)v.src=vs;          // ...usa o arquivo da SESSÃO DE MÍDIAS
+    const tocar=()=>{if(v.paused)v.play().catch(()=>{})}; // ...função que manda tocar (ignora se o navegador recusar)
+    tocar();                                         // ...tenta tocar já
+    v.addEventListener('loadeddata',tocar);          // ...tenta de novo quando o vídeo carregar
+    v.addEventListener('ended',()=>{v.currentTime=0;tocar()}); // ...plano B do loop: chegou ao fim, volta ao começo e toca
+    v.addEventListener('pause',()=>{if(!document.hidden)setTimeout(tocar,300)}); // ...se pausar sozinho, volta a tocar
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)tocar()}); // ...ao voltar para a aba, continua tocando
+    ['touchstart','click','scroll'].forEach(ev=>addEventListener(ev,tocar,{once:true,passive:true})); // ...celular em modo economia: toca no primeiro toque/rolagem
+  }                                                  // fim do vídeo
   const f=$('#fotoFundadora');                       // pega a foto da fundadora
   const fs=caminho(PASTA_SITE,MIDIAS.fotoFundadora); // caminho da foto
   if(fs)f.src=fs;else f.remove();                    // coloca a foto; se não houver, remove (a letra "A" aparece)
