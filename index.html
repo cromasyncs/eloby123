@@ -692,7 +692,7 @@ footer .socials a:hover{background:var(--deep);color:#fff} /* ícone preenchido 
 <div class="pagina" data-pagina="inicio"><!-- Página Início (endereço: #/inicio) -->
 
   <section class="hero" data-fundo="escuro"><!-- Banner de vídeo (fundo escuro → barra sólida) -->
-    <video id="videoBanner" autoplay muted loop playsinline preload="auto"></video><!-- Vídeo do banner (arquivo definido na SESSÃO DE MÍDIAS) -->
+    <video id="videoBanner" src="banner-elo.mp4" poster="banner-elo-capa.jpg" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video><!-- Vídeo do banner: toca sozinho, sem som e em loop infinito (arquivo também definido na SESSÃO DE MÍDIAS) -->
     <div class="container hero-inner"><!-- Conteúdo por cima do vídeo -->
       <div><!-- Coluna de texto -->
         <p class="eyebrow reveal">Alta joalheria autoral</p><!-- Textinho acima do título -->
@@ -1229,10 +1229,10 @@ footer .socials a:hover{background:var(--deep);color:#fff} /* ícone preenchido 
    ██████████████████████████████████████████████████████████████████████████████████
 
    COMO USAR (é só trocar os NOMES dos arquivos):
-   1) Coloque os arquivos dentro das pastas abaixo, ao lado do index.html:
+   1) Coloque TODOS os arquivos na MESMA pasta do index.html (sem subpastas):
         index.html
-        assets/          → favicon, logos, vídeo do banner, foto da fundadora, foto sob medida
-        assets/joias/    → fotos e vídeos das joias, fotos das categorias, coleções e Instagram
+        favicon, logos, vídeo do banner, foto da fundadora, foto sob medida
+        fotos e vídeos das joias, fotos das categorias, coleções e Instagram
    2) Escreva aqui SOMENTE o nome do arquivo com a extensão. Ex: 'anel-aurora-1.jpg'
    3) Se o nome estiver vazio '' ou o arquivo não existir, nada quebra: aparece uma
       ilustração dourada provisória no lugar, até você colocar a foto.
@@ -1240,21 +1240,21 @@ footer .socials a:hover{background:var(--deep);color:#fff} /* ícone preenchido 
    5) Formatos recomendados: fotos .jpg ou .webp (quadradas ou 4:5), vídeos .mp4 curtos e sem som.
    ██████████████████████████████████████████████████████████████████████████████████ */
 
-const PASTA_SITE  = 'assets/';                       // pasta das mídias gerais do site
-const PASTA_JOIAS = 'assets/joias/';                 // pasta das fotos e vídeos das joias
+const PASTA_SITE  = '';                              // mídias gerais do site: na mesma pasta do index.html
+const PASTA_JOIAS = '';                              // fotos e vídeos das joias: na mesma pasta do index.html
 
 const MIDIAS = {                                     // ↓↓↓ TROQUE AQUI OS NOMES DOS ARQUIVOS ↓↓↓
 
-  /* ---------- SITE (ficam em assets/) ---------- */
+  /* ---------- SITE (ficam ao lado do index.html) ---------- */
   favicon:       'favicon-elo.png',                  // ícone da aba do navegador (feito a partir do símbolo vetorizado da logo)
   logo:          '',                                 // A LOGO OFICIAL VETORIZADA JÁ ESTÁ EMBUTIDA NO CÓDIGO (procure "LOGO OFICIAL VETORIZADA"). Só preencha se quiser trocar por um arquivo .png/.svg
   logoBranca:    '',                                 // versão branca opcional (só se preencher a de cima)
   videoBanner:   'banner-elo.mp4',                   // VÍDEO DO BANNER (toca sozinho, sem som e em loop no topo da página Início)
   posterBanner:  'banner-elo-capa.jpg',              // imagem que aparece enquanto o vídeo carrega
   fotoFundadora: 'andressa.jpg',                     // FOTO DA FUNDADORA (página Quem Somos)
-  fotoSobMedida: 'joias/alianca-rose-gravada.jpg',   // foto da página Sob Medida (reaproveita uma foto da pasta joias)
+  fotoSobMedida: 'alianca-rose-gravada.jpg',         // foto da página Sob Medida (reaproveita uma foto das joias)
 
-  /* ---------- CATEGORIAS (ficam em assets/joias/) — foto redonda da página Início e do menu ---------- */
+  /* ---------- CATEGORIAS (ficam ao lado do index.html) — foto redonda da página Início e do menu ---------- */
   categorias: {                                      // cada linha: id da categoria : 'nome-do-arquivo'
     aneis:     'anel-esmeralda-imperial.jpg',        // foto da categoria Anéis
     brincos:   'brinco-esmeralda-real.jpg',          // foto da categoria Brincos
@@ -1266,7 +1266,7 @@ const MIDIAS = {                                     // ↓↓↓ TROQUE AQUI OS
     pulseiras: ''                                    // (ainda sem joias: a categoria fica escondida até você cadastrar uma pulseira)
   },                                                 // fim das categorias
 
-  /* ---------- COLEÇÕES (ficam em assets/joias/) — fundo dos blocos de coleção ---------- */
+  /* ---------- COLEÇÕES (ficam ao lado do index.html) — fundo dos blocos de coleção ---------- */
   colecoes: {                                        // cada linha: id da coleção : 'nome-do-arquivo'
     casamento: 'alianca-tres-ouros.jpg',             // fundo da coleção Casamento
     gemas:     'brinco-esmeralda-real.jpg',          // fundo da coleção Gemas Raras
@@ -1274,7 +1274,7 @@ const MIDIAS = {                                     // ↓↓↓ TROQUE AQUI OS
     eterno:    'brinco-no-elo.jpg'                   // fundo da coleção Elo Eterno
   },                                                 // fim das coleções
 
-  /* ---------- INSTAGRAM (ficam em assets/joias/) — os 6 quadradinhos da página Início ---------- */
+  /* ---------- INSTAGRAM (ficam ao lado do index.html) — os 6 quadradinhos da página Início ---------- */
   instagram: ['alianca-mobius-1.jpg','anel-esmeralda-imperial.jpg','brinco-borboleta-perola.jpg','anel-noivado-trilogia.jpg','colar-chave-brilhante.jpg','brinco-argola-elo.jpg'], // 6 fotos, na ordem
 
   /* ╔════════════════════════════════════════════════════════════════════════════════╗
@@ -1286,7 +1286,7 @@ const MIDIAS = {                                     // ↓↓↓ TROQUE AQUI OS
      ║      - TODAS aparecem no modal, com miniaturas para trocar (quantas quiser).     ║
      ║  • video: 'nome.mp4' → aparece como última miniatura no modal ('' = sem vídeo).  ║
      ║                                                                                  ║
-     ║  PARA ADICIONAR MAIS FOTOS A UMA JOIA: coloque o arquivo em assets/joias/ e      ║
+     ║  PARA ADICIONAR MAIS FOTOS A UMA JOIA: coloque o arquivo ao lado do index.html e ║
      ║  acrescente o nome dentro dos colchetes, separado por vírgula. Exemplo:          ║
      ║     1:  {fotos:['anel-solitario-aurora.jpg','anel-solitario-aurora-2.jpg'], video:'anel-aurora.mp4'},
      ║                                                                                  ║
@@ -1417,7 +1417,7 @@ const PRODUTOS = [                                   // lista de joias (preços 
   // ,{id:36, nome:'Nova Joia', cat:'pulseiras', col:'essencia', preco:3000, gem:'none', tipo:'pulseira'} // ← MODELO de joia nova (apague as // e crie as fotos na SESSÃO DE MÍDIAS com id 36)
 ];                                                   // fim dos produtos
 
-/* Avaliações — em "foto" coloque o nome do arquivo da cliente (fica em assets/), ou deixe '' para mostrar as iniciais */
+/* Avaliações — em "foto" coloque o nome do arquivo da cliente (fica ao lado do index.html), ou deixe '' para mostrar as iniciais */
 const AVALIACOES = [                                 // lista de avaliações (exatamente 7, correndo em loop; edite os textos à vontade)
   {nome:'Marina S.',       cidade:'Belo Horizonte', foto:'', peca:'Anel Solitário Aurora',   texto:'Meu pedido de noivado foi perfeito. O anel é ainda mais lindo pessoalmente, e o atendimento foi impecável.'}, // avaliação 1
   {nome:'Juliana R.',      cidade:'São Paulo',      foto:'', peca:'Colar Chave Brilhante',   texto:'Delicado, brilhante e chegou numa embalagem de presente maravilhosa. Uso todos os dias!'},                    // avaliação 2
@@ -1442,7 +1442,7 @@ const store={                                        // pequena "memória" do na
 };                                                   // fim da memória
 const catNome=id=>(CATEGORIAS.find(c=>c.id===id)||{}).nome||''; // devolve o nome da categoria pelo id
 const colNome=id=>(COLECOES.find(c=>c.id===id)||{}).nome||'';   // devolve o nome da coleção pelo id
-const caminho=(pasta,nome)=>!nome?'':(nome.includes('/')?nome:pasta+nome); // monta o caminho do arquivo: 'anel.jpg' → 'assets/joias/anel.jpg' (se já tiver "/", usa como está)
+const caminho=(pasta,nome)=>!nome?'':(nome.includes('/')?nome:pasta+nome); // monta o caminho do arquivo: 'anel.jpg' → 'anel.jpg' na mesma pasta do index.html (se já tiver "/", usa como está)
 const fotosDe=p=>((MIDIAS.joias[p.id]||{}).fotos||[]).filter(Boolean).map(n=>caminho(PASTA_JOIAS,n)); // lista de fotos de uma joia, com caminho completo
 const videoDe=p=>caminho(PASTA_JOIAS,(MIDIAS.joias[p.id]||{}).video);   // vídeo de uma joia, com caminho completo (ou '' se não tiver)
 const camadaFoto=(src,alt='')=>src?`<img class="foto" src="${src}" alt="${alt}" loading="lazy" onerror="this.remove()">`:''; // cria a foto por cima da ilustração; se o arquivo não existir, a foto se apaga e a ilustração aparece
@@ -1489,7 +1489,18 @@ const camadaFoto=(src,alt='')=>src?`<img class="foto" src="${src}" alt="${alt}" 
   const v=$('#videoBanner');                         // pega o vídeo do banner
   const vs=caminho(PASTA_SITE,MIDIAS.videoBanner);   // caminho do vídeo
   if(MIDIAS.posterBanner)v.poster=caminho(PASTA_SITE,MIDIAS.posterBanner); // imagem de espera do vídeo (se houver)
-  if(vs){v.src=vs;v.play().catch(()=>{})}            // coloca o vídeo e manda tocar (sem som)
+  if(vs){                                            // se há vídeo definido...
+    v.muted=true;v.defaultMuted=true;                // ...garante SEM SOM (os navegadores só deixam tocar sozinho se estiver mudo)
+    v.loop=true;v.autoplay=true;v.playsInline=true;  // ...garante loop, autoplay e tocar dentro da página no iPhone
+    if(v.getAttribute('src')!==vs)v.src=vs;          // ...usa o arquivo da SESSÃO DE MÍDIAS
+    const tocar=()=>{if(v.paused)v.play().catch(()=>{})}; // ...função que manda tocar (ignora se o navegador recusar)
+    tocar();                                         // ...tenta tocar já
+    v.addEventListener('loadeddata',tocar);          // ...tenta de novo quando o vídeo carregar
+    v.addEventListener('ended',()=>{v.currentTime=0;tocar()}); // ...plano B do loop: chegou ao fim, volta ao começo e toca
+    v.addEventListener('pause',()=>{if(!document.hidden)setTimeout(tocar,300)}); // ...se pausar sozinho, volta a tocar
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)tocar()}); // ...ao voltar para a aba, continua tocando
+    ['touchstart','click','scroll'].forEach(ev=>addEventListener(ev,tocar,{once:true,passive:true})); // ...celular em modo economia: toca no primeiro toque/rolagem
+  }                                                  // fim do vídeo
   const f=$('#fotoFundadora');                       // pega a foto da fundadora
   const fs=caminho(PASTA_SITE,MIDIAS.fotoFundadora); // caminho da foto
   if(fs)f.src=fs;else f.remove();                    // coloca a foto; se não houver, remove (a letra "A" aparece)
